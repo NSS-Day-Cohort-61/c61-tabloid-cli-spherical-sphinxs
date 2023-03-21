@@ -47,7 +47,6 @@ namespace TabloidCLI.UserInterfaceManagers
                     }
                     else
                     {
-                        return new AuthorDetailManager(this, _connectionString, blog.Id);
                     }
                 case "3":
                     Add();
@@ -79,7 +78,6 @@ namespace TabloidCLI.UserInterfaceManagers
         {
             if (prompt == null)
             {
-                prompt = "Please choose an Author:";
             }
 
             Console.WriteLine(prompt);
@@ -154,3 +152,4 @@ namespace TabloidCLI.UserInterfaceManagers
         }
     }
 }
+
