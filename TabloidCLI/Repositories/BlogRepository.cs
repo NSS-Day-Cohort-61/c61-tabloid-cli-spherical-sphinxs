@@ -6,9 +6,10 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using TabloidCLI.Models;
+using TabloidCLI.Repositories;
 
 
-namespace TabloidCLI.Repositories
+namespace TabloidCLI
 {
     public class BlogRepository : DatabaseConnector, IRepository<Blog>
     {
@@ -19,9 +20,9 @@ namespace TabloidCLI.Repositories
             using (SqlConnection conn = Connection)
             {
                 conn.Open();
-                using (SqlCommand cmd = Connection.CreateCommand())
+                using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @" SELECT id,
+                    cmd.CommandText = @"SELECT id,
                                             Title,
                                             Url
                                        FROM Blog";
@@ -68,7 +69,7 @@ namespace TabloidCLI.Repositories
                         {
                             blog = new Blog()
                             {
-                                Id = reader.GetInt32(reader.GetOrdinal("AuthorId")),
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
                                 Title = reader.GetString(reader.GetOrdinal("Title")),
                                 Url = reader.GetString(reader.GetOrdinal("Url")),
                             };
@@ -113,6 +114,7 @@ namespace TabloidCLI.Repositories
 
                     cmd.Parameters.AddWithValue("@Title", blog.Title);
                     cmd.Parameters.AddWithValue("@Url", blog.Url);
+                    cmd.Parameters.AddWithValue("@id", blog.Id);
 
                     cmd.ExecuteNonQuery();
                 }
