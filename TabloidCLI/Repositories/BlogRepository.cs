@@ -6,9 +6,10 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using TabloidCLI.Models;
+using TabloidCLI.Repositories;
 
 
-namespace TabloidCLI.Repositories
+namespace TabloidCLI
 {
     public class BlogRepository : DatabaseConnector, IRepository<Blog>
     {
@@ -19,9 +20,9 @@ namespace TabloidCLI.Repositories
             using (SqlConnection conn = Connection)
             {
                 conn.Open();
-                using (SqlCommand cmd = Connection.CreateCommand())
+                using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @" SELECT id,
+                    cmd.CommandText = @"SELECT id,
                                             Title,
                                             Url
                                        FROM Blog";
