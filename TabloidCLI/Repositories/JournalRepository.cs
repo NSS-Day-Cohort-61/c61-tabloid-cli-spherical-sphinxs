@@ -6,10 +6,10 @@ using TabloidCLI.Repositories;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TabloidCLI.Models;
 
 namespace TabloidCLI.Repositories
 {
+    public class JournalRepository : DatabaseConnector, IRepository<Journal>
     {
         public JournalRepository(string connectionString) : base(connectionString) { }
 
@@ -18,7 +18,7 @@ namespace TabloidCLI.Repositories
             using (SqlConnection conn = Connection)
             {
                 conn.Open();
-                using (SqlCommand cmd = conn.CreateCommand()) 
+                using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"SELECT Id,
                                                Title,
@@ -28,7 +28,7 @@ namespace TabloidCLI.Repositories
                     List<Journal> journals = new List<Journal>();
 
                     SqlDataReader reader = cmd.ExecuteReader();
-                    while (reader.Read()) 
+                    while (reader.Read())
                     {
                         Journal journal = new Journal()
                         {
@@ -82,10 +82,10 @@ namespace TabloidCLI.Repositories
         }
         public void Insert(Journal journal)
         {
-            using (SqlConnection conn = Connection) 
-            { 
+            using (SqlConnection conn = Connection)
+            {
                 conn.Open();
-                using (SqlCommand cmd = conn.CreateCommand()) 
+                using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"INSERT INTO Journal (Title, Content, CreateDateTime)
                                                     VALUES (@title, @content, @createDateTime)";
@@ -101,10 +101,10 @@ namespace TabloidCLI.Repositories
 
         public void Update(Journal journal)
         {
-            using (SqlConnection conn = Connection) 
+            using (SqlConnection conn = Connection)
             {
                 conn.Open();
-                using (SqlCommand cmd = conn.CreateCommand()) 
+                using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"UPDATE Journal
                                             SET Title = @title,
@@ -121,7 +121,7 @@ namespace TabloidCLI.Repositories
             }
         }
 
-        public void Delete(int id) 
+        public void Delete(int id)
         {
             using (SqlConnection conn = Connection)
             {
@@ -133,7 +133,7 @@ namespace TabloidCLI.Repositories
 
                     cmd.ExecuteNonQuery();
                 }
-            }    
+            }
         }
     }
 }
