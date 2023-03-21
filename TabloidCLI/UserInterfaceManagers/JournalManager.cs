@@ -15,7 +15,7 @@ namespace TabloidCLI.UserInterfaceManagers
         private JournalRepository _journalRepository;
         private string _connectionString;
 
-        public JournalManager(IUserInterfaceManager parentUI, JournalRepository journalRepository, string connectionString)
+        public JournalManager(IUserInterfaceManager parentUI, string connectionString)
         {
             _parentUI = parentUI;
             _journalRepository = new JournalRepository(connectionString);
@@ -89,10 +89,12 @@ namespace TabloidCLI.UserInterfaceManagers
         private void List()
         {
             List<Journal> journals = _journalRepository.GetAll();
+            Console.WriteLine("-----------------");
             foreach (Journal journal in journals)
             {
-                Console.WriteLine(journal);
+                Console.WriteLine(journal.Title);
             }
+            Console.WriteLine("-----------------");
         }
 
         private void Add()
@@ -104,9 +106,10 @@ namespace TabloidCLI.UserInterfaceManagers
             journal.Title = Console.ReadLine();
 
             Console.Write("Text Content: ");
-            journal.TextContent = Console.ReadLine();
+            journal.Content = Console.ReadLine();
 
-            journal.CreationDate = DateTime.Now;
+            journal.CreateDateTime = DateTime.Now;
+            _journalRepository.Insert(journal);
         }
 
         private void Edit()
@@ -127,7 +130,7 @@ namespace TabloidCLI.UserInterfaceManagers
             string textContent = Console.ReadLine();
             if (!string.IsNullOrWhiteSpace(textContent))
             {
-                journalToEdit.TextContent = textContent;
+                journalToEdit.Content = textContent;
             }
 
             _journalRepository.Update(journalToEdit);
@@ -135,7 +138,7 @@ namespace TabloidCLI.UserInterfaceManagers
 
         private void Remove()
         {
-            Journal journalToDelete = Choose("Which journal entry would you liek to remove?");
+            Journal journalToDelete = Choose("Which journal entry would you like to remove?");
             if (journalToDelete != null)
             {
                 _journalRepository.Delete(journalToDelete.Id);

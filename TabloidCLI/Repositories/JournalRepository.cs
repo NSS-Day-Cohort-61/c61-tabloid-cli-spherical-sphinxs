@@ -20,27 +20,63 @@ namespace TabloidCLI.Repositories
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand()) 
                 {
-                    cmd.CommandText = @"SELECT id,
+                    cmd.CommandText = @"SELECT Id,
                                                Title,
-                                               TextContent,
-                                               CreationDate
+                                               Content,
+                                               CreateDateTime
                                         FROM Journal";
                     List<Journal> journals = new List<Journal>();
 
                     SqlDataReader reader = cmd.ExecuteReader();
                     while (reader.Read()) 
                     {
-                        Journal journal = new Journal();
+                        Journal journal = new Journal()
                         {
-                            Id = reader.GetInt32(reader.GetOrdinal("Id"));
-                            Title = reader.GetString(reader.GetOrdinal("Title"));
-                            TextContent = reader.GetString(reader.GetOrdinal("TextContent"));
-                            CreationDate = reader.GetDateTime(reader.GetOrdinal("CreationDate"));
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Title = reader.GetString(reader.GetOrdinal("Title")),
+                            Content = reader.GetString(reader.GetOrdinal("Content")),
+                            CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
                         };
                         journals.Add(journal);
                     }
                     reader.Close();
                     return journals;
+                }
+            }
+        }
+
+        public Journal Get(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @" SELECT id,
+                                               Title,
+                                               Content,
+                                               CreateDateTime
+                                               FROM Journal";
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    Journal journal = null;
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        if (journal == null)
+                        {
+                            journal = new Journal()
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                Title = reader.GetString(reader.GetOrdinal("Title")),
+                                Content = reader.GetString(reader.GetOrdinal("Content")),
+                                CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
+                            };
+                        }
+                    }
+                    reader.Close();
+                    return journal;
                 }
             }
         }
@@ -51,11 +87,12 @@ namespace TabloidCLI.Repositories
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand()) 
                 {
-                    cmd.CommandText = @"INSERT INTO Journal (Title, TextContent, CreationDate)
-                                                    VALUES (@title, @TextContent, @creationDate)";
-                    cmd.Parameters.AddWithValue("@title", journal.title);
-                    cmd.Parameters.AddWithValue("@textContent", journal.textContent);
-                    cmd.Parameters.AddWithValue("@creationDate", journal.creationDate);
+                    cmd.CommandText = @"INSERT INTO Journal (Title, Content, CreateDateTime)
+                                                    VALUES (@title, @content, @createDateTime)";
+                    cmd.Parameters.AddWithValue("@title", journal.Title);
+                    cmd.Parameters.AddWithValue("@content", journal.Content);
+                    cmd.Parameters.AddWithValue("@createDateTime", journal.CreateDateTime);
+                    //cmd.Parameters.AddWithValue("@id", journal.Id);
 
                     cmd.ExecuteNonQuery();
                 }
@@ -71,12 +108,13 @@ namespace TabloidCLI.Repositories
                 {
                     cmd.CommandText = @"UPDATE Journal
                                             SET Title = @title,
-                                                TextContent = @textContent,
-                                                CreationDate = @creationDate
+                                                Content = @content,
+                                                CreateDateTime = @createDateTime
                                             WHERE id = @id";
                     cmd.Parameters.AddWithValue("@title", journal.Title);
-                    cmd.Parameters.AddWithValue("@textContent", journal.TextContent);
-                    cmd.Parameters.AddWithValue("@creationDate", journal.CreationDate);
+                    cmd.Parameters.AddWithValue("@content", journal.Content);
+                    cmd.Parameters.AddWithValue("@createDateTime", journal.CreateDateTime);
+                    cmd.Parameters.AddWithValue("@id", journal.Id);
 
                     cmd.ExecuteNonQuery();
                 }
