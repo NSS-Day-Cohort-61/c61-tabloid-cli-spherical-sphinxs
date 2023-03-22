@@ -12,7 +12,7 @@ namespace TabloidCLI.Repositories
     {
         public NoteRepository(string connectionString) : base(connectionString) { }
 
-        public List<Blog> GetAll()
+        public List<Note> GetAll()
         {
             using (SqlConnection conn = Connection)
             {
