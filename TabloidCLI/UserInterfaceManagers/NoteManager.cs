@@ -13,19 +13,13 @@ namespace TabloidCLI.UserInterfaceManagers
     internal class NoteManager : IUserInterfaceManager 
     {
         private readonly IUserInterfaceManager _parentUI;
-        private PostRepository _postRepository;
-        private AuthorRepository _authorRepository;
-        private BlogRepository _blogRepository;
         private NoteRepository _noteRepository;
         private string _connectionString;
 
         public NoteManager(IUserInterfaceManager parentUI, string connectionString)
         {
         _parentUI = parentUI;
-        _postRepository = new PostRepository(connectionString);
-        _authorRepository = new AuthorRepository(connectionString);
-        _blogRepository = new BlogRepository(connectionString);
-        _noteRepository = new NoteRepository(connectionString);
+       _noteRepository = new NoteRepository(connectionString);
         _connectionString = connectionString;
         }
 
@@ -111,6 +105,10 @@ namespace TabloidCLI.UserInterfaceManagers
 
             Console.Write("Content: ");
             note.Content = Console.ReadLine();
+
+            note.CreateDateTime = DateTime.Now;
+
+    
 
             _noteRepository.Insert(note);   
         }

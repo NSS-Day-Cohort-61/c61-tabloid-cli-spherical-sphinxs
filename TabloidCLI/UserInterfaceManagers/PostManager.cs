@@ -177,7 +177,7 @@ namespace TabloidCLI.UserInterfaceManagers
             Console.WriteLine("Url: ");
             post.Url = Console.ReadLine();
 
-            Console.WriteLine("Publication Date: ");
+            
             post.PublishDateTime = DateTime.Now;
 
             Console.WriteLine("Select the Author: ");
@@ -224,21 +224,6 @@ namespace TabloidCLI.UserInterfaceManagers
             }
         }
 
-        private void AddNote()
-        {
-            Console.WriteLine("Add a Note");
-            Note note = new Note();
-
-            Console.WriteLine("Title: ");
-            note.Title = Console.ReadLine();
-
-            Console.WriteLine("Note Content: ");
-            note.Content = Console.ReadLine();
- 
-            note.CreateDateTime = DateTime.Now;
-
-           
-            _noteRepository.Insert(note);
-        }
+       
     }   
 }

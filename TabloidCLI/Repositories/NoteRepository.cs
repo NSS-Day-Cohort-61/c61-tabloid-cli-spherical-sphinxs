@@ -19,12 +19,12 @@ namespace TabloidCLI.Repositories
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT id,
-                                            Title,
-                                            Content,
-                                            CreateDateTime
+                    cmd.CommandText = @"SELECT n.Id, 
+                                        n.Title, 
+                                        n.Content, 
+                                        n.CreateDateTime 
                                         FROM Note n
-                                        LEFT JOIN Post p on p.id = n.PostId";
+                                        LEFT JOIN Post p on p.Id = n.PostId ";
                     List<Note> notes = new List<Note>();
 
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -64,10 +64,12 @@ namespace TabloidCLI.Repositories
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"INSERT INTO Note (Title, Content)
-                                                     VALUES (@Title, @Content)";
+                    cmd.CommandText = @"INSERT INTO Note (Title, Content, CreateDateTime, PostId)
+                                                     VALUES (@Title, @Content, @CreateDateTime, @PostId)";
                     cmd.Parameters.AddWithValue("@Title", note.Title);
                     cmd.Parameters.AddWithValue("@Content", note.Content);
+                    cmd.Parameters.AddWithValue("@CreateDateTime", note.CreateDateTime);
+                    cmd.Parameters.AddWithValue("@PostId", note.Post.Id);
 
                     cmd.ExecuteNonQuery();
                 }
@@ -85,8 +87,8 @@ namespace TabloidCLI.Repositories
                                             SET Title = @title
                                         WHERE id = @id";
 
-                    cmd.Parameters.AddWithValue("@title", note.Title);
-                    cmd.Parameters.AddWithValue("@id", note.Id);
+                    cmd.Parameters.AddWithValue("@Title", note.Title);
+                    cmd.Parameters.AddWithValue("@Id", note.Id);
 
                     cmd.ExecuteNonQuery();
                 }
