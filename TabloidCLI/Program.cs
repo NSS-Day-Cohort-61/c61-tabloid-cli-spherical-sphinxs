@@ -9,6 +9,10 @@ namespace TabloidCLI
     {
         static void Main(string[] args)
         {
+            // Welcome Message
+            Console.WriteLine("Welcome to the Sphinx's Blog Organizer!");
+            Console.WriteLine();
+
             // Color Manager
             ColorManager();
 
