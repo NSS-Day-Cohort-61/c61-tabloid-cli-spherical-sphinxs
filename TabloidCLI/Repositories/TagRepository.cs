@@ -86,11 +86,10 @@ namespace TabloidCLI
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"DELETE FROM Tag WHERE id = @id";
-                                        // May need this for when dealing with tag bridge tables? Look into cascading deletes maybe?
-                                        // DELETE FROM PostTag WHERE TagId = @id
-                                        // DELETE FROM AuthorTag WHERE TagId = @id
-                                        // DELETE FROM BlogTag WHERE TagId = @id
+                    cmd.CommandText = @"DELETE FROM PostTag WHERE TagId = @id
+                                        DELETE FROM AuthorTag WHERE TagId = @id
+                                        DELETE FROM BlogTag WHERE TagId = @id
+                                        DELETE FROM Tag WHERE id = @id";
                     cmd.Parameters.AddWithValue("@id", id);
 
                     cmd.ExecuteNonQuery();
