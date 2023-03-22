@@ -6,10 +6,9 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using TabloidCLI.Models;
-using TabloidCLI.Repositories;
 
 
-namespace TabloidCLI
+namespace TabloidCLI.Repositories
 {
     public class BlogRepository : DatabaseConnector, IRepository<Blog>
     {
@@ -20,12 +19,12 @@ namespace TabloidCLI
             using (SqlConnection conn = Connection)
             {
                 conn.Open();
-                using (SqlCommand cmd = conn.CreateCommand())
+                using (SqlCommand cmd = Connection.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT id,
+                    cmd.CommandText = @" SELECT id,
                                             Title,
                                             Url
-                                        FROM Blog";
+                                       FROM Blog";
                     List<Blog> blogs = new List<Blog>();
 
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -35,10 +34,8 @@ namespace TabloidCLI
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             Title = reader.GetString(reader.GetOrdinal("Title")),
-                            Url = reader.GetString(reader.GetOrdinal("Url")),
-
+                            Url = reader.GetString(reader.GetOrdinal("Url"))
                         };
-
                         blogs.Add(blog);
                     }
                     reader.Close();
@@ -55,15 +52,10 @@ namespace TabloidCLI
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT b.Id AS BlogId,
-                                               b.Title,
-                                               b.Url,
-                                               t.Id AS TagId,
-                                               t.Name
-                                         FROM Blog b 
-                                               LEFT JOIN BlogTag bt on b.Id = bt.BlogId
-                                               LEFT JOIN Tag t on t.Id = bt.TagId
-                                         WHERE b.id = @id";
+                    cmd.CommandText = @" SELECT id,
+                                            Title,
+                                            Url
+                                       FROM Blog";
 
                     cmd.Parameters.AddWithValue("@id", id);
 
@@ -76,19 +68,10 @@ namespace TabloidCLI
                         {
                             blog = new Blog()
                             {
-                                Id = reader.GetInt32(reader.GetOrdinal("BlogId")),
+                                Id = reader.GetInt32(reader.GetOrdinal("AuthorId")),
                                 Title = reader.GetString(reader.GetOrdinal("Title")),
-                                Url = reader.GetString(reader.GetOrdinal("Url"))
+                                Url = reader.GetString(reader.GetOrdinal("Url")),
                             };
-                        }
-
-                        if (!reader.IsDBNull(reader.GetOrdinal("TagId")))
-                        {
-                            blog.Tags.Add(new Tag()
-                            {
-                                Id = reader.GetInt32(reader.GetOrdinal("TagId")),
-                                Name = reader.GetString(reader.GetOrdinal("Name")),
-                            });
                         }
                     }
 
@@ -124,13 +107,12 @@ namespace TabloidCLI
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"UPDATE Blog 
-                                           SET Title = @title,
-                                               Url = @url
+                                           SET Title = @Title,
+                                               Url = @Url,
                                          WHERE id = @id";
 
                     cmd.Parameters.AddWithValue("@Title", blog.Title);
                     cmd.Parameters.AddWithValue("@Url", blog.Url);
-                    cmd.Parameters.AddWithValue("@id", blog.Id);
 
                     cmd.ExecuteNonQuery();
                 }
