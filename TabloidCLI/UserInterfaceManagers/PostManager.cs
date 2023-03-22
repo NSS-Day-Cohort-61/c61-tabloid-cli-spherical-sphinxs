@@ -238,7 +238,7 @@ namespace TabloidCLI.UserInterfaceManagers
  
             note.CreateDateTime = DateTime.Now;
 
-            
+           
             _noteRepository.Insert(note);
         }
     }   

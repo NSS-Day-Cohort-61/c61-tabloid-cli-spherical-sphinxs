@@ -21,8 +21,10 @@ namespace TabloidCLI.Repositories
                 {
                     cmd.CommandText = @"SELECT id,
                                             Title,
-                                            Content
-                                        FROM Note";
+                                            Content,
+                                            CreateDateTime
+                                        FROM Note n
+                                        LEFT JOIN Post p on p.id = n.PostId";
                     List<Note> notes = new List<Note>();
 
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -33,6 +35,12 @@ namespace TabloidCLI.Repositories
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             Title = reader.GetString(reader.GetOrdinal("Title")),
                             Content = reader.GetString(reader.GetOrdinal("Content")),
+                            CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
+                            Post = new Post()
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                Title = reader.GetString(reader.GetOrdinal("PostTitle")),
+                            }
 
                         };
 
@@ -45,8 +53,11 @@ namespace TabloidCLI.Repositories
             }
         }
 
-
-            public void Insert(Note note)
+        public Note Get(int id)
+        {
+            throw new NotImplementedException();
+        }
+        public void Insert(Note note)
         {
             using (SqlConnection conn = Connection)
             {
@@ -57,6 +68,40 @@ namespace TabloidCLI.Repositories
                                                      VALUES (@Title, @Content)";
                     cmd.Parameters.AddWithValue("@Title", note.Title);
                     cmd.Parameters.AddWithValue("@Content", note.Content);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void Update(Note note)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"UPDATE Note 
+                                            SET Title = @title
+                                        WHERE id = @id";
+
+                    cmd.Parameters.AddWithValue("@title", note.Title);
+                    cmd.Parameters.AddWithValue("@id", note.Id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void Delete(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"DELETE FROM Note WHERE id = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
 
                     cmd.ExecuteNonQuery();
                 }
