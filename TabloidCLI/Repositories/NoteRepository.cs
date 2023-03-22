@@ -12,7 +12,7 @@ namespace TabloidCLI.Repositories
     {
         public NoteRepository(string connectionString) : base(connectionString) { }
 
-        public List<Blog> GetAll()
+        public List<Note> GetAll()
         {
             using (SqlConnection conn = Connection)
             {
@@ -45,8 +45,17 @@ namespace TabloidCLI.Repositories
             }
         }
 
+        public Note Get(int id)
+        {
+            throw new NotImplementedException();
+        }
 
-            public void Insert(Note note)
+        public void Update(Note note)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Insert(Note note)
         {
             using (SqlConnection conn = Connection)
             {
@@ -59,6 +68,19 @@ namespace TabloidCLI.Repositories
                     cmd.Parameters.AddWithValue("@Content", note.Content);
 
                     cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void Delete(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using(SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"DELETE FROM note WHERE id = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
                 }
             }
         }
