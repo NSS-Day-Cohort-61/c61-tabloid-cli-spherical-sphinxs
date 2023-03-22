@@ -12,6 +12,7 @@ namespace TabloidCLI.UserInterfaceManagers
         private PostRepository _postRepository;
         private AuthorRepository _authorRepository;
         private BlogRepository _blogRepository;
+        private NoteRepository _noteRepository;
         private string _connectionString;
         
 
@@ -21,6 +22,7 @@ namespace TabloidCLI.UserInterfaceManagers
             _postRepository = new PostRepository(connectionString);
             _authorRepository = new AuthorRepository(connectionString);
             _blogRepository = new BlogRepository(connectionString);
+            _noteRepository = new NoteRepository(connectionString);
             _connectionString = connectionString;
         }
 
@@ -53,7 +55,7 @@ namespace TabloidCLI.UserInterfaceManagers
                     Remove();
                     return this;
                 case "5":
-                    throw new NotImplementedException();
+                    return new NoteManager(this, _connectionString);
                 case "0":
                     return _parentUI;
                 default:
@@ -220,6 +222,23 @@ namespace TabloidCLI.UserInterfaceManagers
             {
                 _postRepository.Delete(postToDelete.Id);
             }
+        }
+
+        private void AddNote()
+        {
+            Console.WriteLine("Add a Note");
+            Note note = new Note();
+
+            Console.WriteLine("Title: ");
+            note.Title = Console.ReadLine();
+
+            Console.WriteLine("Note Content: ");
+            note.Content = Console.ReadLine();
+ 
+            note.CreateDateTime = DateTime.Now;
+
+            
+            _noteRepository.Insert(note);
         }
     }   
 }
