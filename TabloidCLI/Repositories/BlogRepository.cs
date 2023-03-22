@@ -124,8 +124,8 @@ namespace TabloidCLI
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"UPDATE Blog 
-                                           SET Title = @Title,
-                                               Url = @Url,
+                                           SET Title = @title,
+                                               Url = @url
                                          WHERE id = @id";
 
                     cmd.Parameters.AddWithValue("@Title", blog.Title);
