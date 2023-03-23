@@ -219,14 +219,15 @@ namespace TabloidCLI
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    
+
                     cmd.CommandText = @"SELECT t.Name, a.FirstName, b.Title as BlogTitle, p.Title as PostTitle FROM Author a
                         LEFT JOIN AuthorTag art on art.AuthorId = a.Id
                         LEFT JOIN Tag t on t.id = art.TagId
                         LEFT JOIN PostTag pt on t.Id = pt.TagId
                         LEFT JOIN Post p on p.id = pt.PostId
                         LEFT JOIN Blog b on p.BlogId = b.Id
-                        LEFT JOIN BlogTag bt on bt.BlogId = b.Id";
+                        LEFT JOIN BlogTag bt on bt.BlogId = b.Id
+                        WHERE t.name LIKE @name";
 
                     cmd.Parameters.AddWithValue("@name", $"%{tagName}%");
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -234,23 +235,33 @@ namespace TabloidCLI
                     SearchResults<object> results = new SearchResults<object>();
                     while (reader.Read())
                     {
-                        Blog blog = new Blog()
+                        if (!reader.IsDBNull(reader.GetOrdinal("BlogTitle")))
                         {
-                            Title = reader.GetString(reader.GetOrdinal("BlogTitle")),
+                            Blog blog = new Blog()
+                            {
+                                Title = reader.GetString(reader.GetOrdinal("BlogTitle")),
+                            };
+                            results.Add(blog);
                         };
-                        results.Add(blog);
+                        if (!reader.IsDBNull(reader.GetOrdinal("FirstName")))
+                        {
+                            Author author = new Author()
+                            {
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                            };
+                            results.Add(author);
 
-                        Author author = new Author()
-                        {
-                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-                        };
-                        results.Add(author);
+                        }
 
-                        Post post = new Post()
+                        if (!reader.IsDBNull(reader.GetOrdinal("PostTitle")))
                         {
-                            Title = reader.GetString(reader.GetOrdinal("PostTitle")),
-                        };
-                        results.Add(post);
+
+                            Post post = new Post()
+                            {
+                                Title = reader.GetString(reader.GetOrdinal("PostTitle")),
+                            };
+                            results.Add(post);
+                        }
                     }
                     reader.Close();
                     return results;
