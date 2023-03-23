@@ -107,7 +107,7 @@ namespace TabloidCLI.UserInterfaceManagers
 
         private void Add()
         {
-            Console.WriteLine("New Author");
+            Console.WriteLine("New Blog");
             Blog blog = new Blog();
 
             Console.Write("Title: ");
