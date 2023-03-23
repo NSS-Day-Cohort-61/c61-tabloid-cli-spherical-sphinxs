@@ -22,7 +22,8 @@ namespace TabloidCLI.Repositories
                     cmd.CommandText = @"SELECT n.Id, 
                                         n.Title, 
                                         n.Content, 
-                                        n.CreateDateTime 
+                                        n.CreateDateTime,
+                                        p.Title as PostTitle
                                         FROM Note n
                                         LEFT JOIN Post p on p.Id = n.PostId ";
                     List<Note> notes = new List<Note>();
@@ -66,9 +67,8 @@ namespace TabloidCLI.Repositories
                 {
                     cmd.CommandText = @"INSERT INTO Note (Title, Content, CreateDateTime, PostId)
                                                      VALUES (@Title, @Content, @CreateDateTime, @PostId)
-                                        LEFT JOIN  Post on Note.PostId = Post.Id
-                                        LEFT JOIN PostTag on PostTag.PostId = Post.Id
-                                        LEFT JOIN Tag on Tag.Id = PostTag.TagId";
+                                         SELECT Post.Title as PostTitle FROM Note
+                                          LEFT JOIN Post on Post.Id = Note.PostId";
                     cmd.Parameters.AddWithValue("@Title", note.Title);
                     cmd.Parameters.AddWithValue("@Content", note.Content);
                     cmd.Parameters.AddWithValue("@CreateDateTime", note.CreateDateTime);
