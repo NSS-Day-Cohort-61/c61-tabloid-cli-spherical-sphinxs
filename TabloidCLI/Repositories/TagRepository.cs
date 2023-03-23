@@ -136,7 +136,7 @@ namespace TabloidCLI
             }
         }
 
-        public SearchResults<Blog> SearchBlogs(string tagName) 
+        public SearchResults<Blog> SearchBlogs(string tagName)
         {
             using (SqlConnection conn = Connection)
             {
@@ -151,7 +151,7 @@ namespace TabloidCLI
                                                LEFT JOIN Tag t on t.Id = bt.TagId
                                         WHERE t.name LIKE @name";
                     cmd.Parameters.AddWithValue("@name", $"%{tagName}%");
-                    SqlDataReader reader = cmd.ExecuteReader(); 
+                    SqlDataReader reader = cmd.ExecuteReader();
 
                     SearchResults<Blog> results = new SearchResults<Blog>();
                     while (reader.Read())
@@ -170,9 +170,9 @@ namespace TabloidCLI
                 }
             }
         }
-        public SearchResults<Post> SearchPosts(string tagName) 
+        public SearchResults<Post> SearchPosts(string tagName)
         {
-            using (SqlConnection conn = Connection) 
+            using (SqlConnection conn = Connection)
             {
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
@@ -182,7 +182,7 @@ namespace TabloidCLI
                                                p.Url,
                                                p.PublishDateTime,
                                                p.AuthorId,
-                                               p.BlogId,
+                                               p.BlogId
                                          FROM Post p
                                                LEFT JOIN PostTag pt on p.Id = pt.PostId
                                                LEFT JOIN Tag t on t.id = pt.TagId
@@ -191,7 +191,7 @@ namespace TabloidCLI
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     SearchResults<Post> results = new SearchResults<Post>();
-                    while (reader.Read()) 
+                    while (reader.Read())
                     {
                         Post post = new Post()
                         {
@@ -207,6 +207,54 @@ namespace TabloidCLI
                     reader.Close();
 
                     return results;
+                }
+            }
+        }
+
+
+        public SearchResults<Object> SearchAll(string tagName)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    
+                    cmd.CommandText = @"SELECT t.Name, a.FirstName, b.Title as BlogTitle, p.Title as PostTitle FROM Author a
+                        LEFT JOIN AuthorTag art on art.AuthorId = a.Id
+                        LEFT JOIN Tag t on t.id = art.TagId
+                        LEFT JOIN PostTag pt on t.Id = pt.TagId
+                        LEFT JOIN Post p on p.id = pt.PostId
+                        LEFT JOIN Blog b on p.BlogId = b.Id
+                        LEFT JOIN BlogTag bt on bt.BlogId = b.Id";
+
+                    cmd.Parameters.AddWithValue("@name", $"%{tagName}%");
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    SearchResults<object> results = new SearchResults<object>();
+                    while (reader.Read())
+                    {
+                        Blog blog = new Blog()
+                        {
+                            Title = reader.GetString(reader.GetOrdinal("BlogTitle")),
+                        };
+                        results.Add(blog);
+
+                        Author author = new Author()
+                        {
+                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                        };
+                        results.Add(author);
+
+                        Post post = new Post()
+                        {
+                            Title = reader.GetString(reader.GetOrdinal("PostTitle")),
+                        };
+                        results.Add(post);
+                    }
+                    reader.Close();
+                    return results;
+
                 }
             }
         }
