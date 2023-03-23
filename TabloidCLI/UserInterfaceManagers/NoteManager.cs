@@ -108,6 +108,9 @@ namespace TabloidCLI.UserInterfaceManagers
 
             note.CreateDateTime = DateTime.Now;
 
+            Console.Write("Related Posts: ");
+            
+            
     
 
             _noteRepository.Insert(note);   
