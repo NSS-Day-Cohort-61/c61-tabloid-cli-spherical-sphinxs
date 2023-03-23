@@ -12,6 +12,7 @@ namespace TabloidCLI.UserInterfaceManagers
         private PostRepository _postRepository;
         private AuthorRepository _authorRepository;
         private BlogRepository _blogRepository;
+        private NoteRepository _noteRepository;
         private string _connectionString;
         
 
@@ -21,6 +22,7 @@ namespace TabloidCLI.UserInterfaceManagers
             _postRepository = new PostRepository(connectionString);
             _authorRepository = new AuthorRepository(connectionString);
             _blogRepository = new BlogRepository(connectionString);
+            _noteRepository = new NoteRepository(connectionString);
             _connectionString = connectionString;
         }
 
@@ -30,10 +32,10 @@ namespace TabloidCLI.UserInterfaceManagers
             
             Console.WriteLine("Post Menu");
             Console.WriteLine(" 1) List Posts");
-            Console.WriteLine(" 2) Add Post");
-            Console.WriteLine(" 3) Edit Post");
-            Console.WriteLine(" 4) Remove Post");
-            Console.WriteLine(" 5) Note Management");
+            Console.WriteLine(" 2) View Post Details");
+            Console.WriteLine(" 3) Add Post");
+            Console.WriteLine(" 4) Edit Post");
+            Console.WriteLine(" 5) Remove Post");
             Console.WriteLine(" 0) Go Back");
 
             Console.Write("> ");
@@ -44,16 +46,24 @@ namespace TabloidCLI.UserInterfaceManagers
                     List();
                     return this;
                 case "2":
+                    Post post = Choose();
+                    if (post == null)
+                    {
+                        return this;
+                    }
+                    else
+                    {
+                        return new PostDetailManager(this, _connectionString, post.Id);
+                    }
+                case "3":
                     Add();
                     return this;
-                case "3":
+                case "4":
                     Edit();
                     return this;
-                case "4":
+                case "5":
                     Remove();
                     return this;
-                case "5":
-                    throw new NotImplementedException();
                 case "0":
                     return _parentUI;
                 default:
@@ -220,6 +230,23 @@ namespace TabloidCLI.UserInterfaceManagers
             {
                 _postRepository.Delete(postToDelete.Id);
             }
+        }
+
+        private void AddNote()
+        {
+            Console.WriteLine("Add a Note");
+            Note note = new Note();
+
+            Console.WriteLine("Title: ");
+            note.Title = Console.ReadLine();
+
+            Console.WriteLine("Note Content: ");
+            note.Content = Console.ReadLine();
+ 
+            note.CreateDateTime = DateTime.Now;
+
+            
+            _noteRepository.Insert(note);
         }
     }   
 }
